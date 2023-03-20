@@ -4,8 +4,17 @@ import Accordian from "../common/Accordion";
 import AllValuts from "./AllVaults";
 import AllItems from "./AllItems";
 import Folders from "./Folders";
+import AddItemModal from "./Modal";
+import DataTable from "../common/DataTable";
+
+import AddIcon from "@mui/icons-material/Add";
+import { Button } from "@mui/material";
 
 function HomeComponent() {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   let AllVaultData = [
     {
       header: "All Vaults",
@@ -23,9 +32,8 @@ function HomeComponent() {
 
   return (
     <section>
-      <h2>VAULT</h2>
-      <div className={`${styles["filter-container"]}`}>
-        <div>
+      <div className={`${styles["container"]}`}>
+        <div className={`${styles["filter-container"]}`}>
           <h4>Filter</h4>
           <div>
             <div>
@@ -39,8 +47,23 @@ function HomeComponent() {
           </div>
         </div>
 
-        <div>middle</div>
+        <div className={`${styles["details-container"]}`}>
+          <div className={`${styles["add-item-container"]}`}>
+            <h4>ALL VAULT</h4>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleOpen}
+            >
+              Add New Item
+            </Button>
+          </div>
+          <div className={`${styles["data-container"]}`}>
+            <DataTable />
+          </div>
+        </div>
       </div>
+      <AddItemModal open={open} handleClose={handleClose} />
     </section>
   );
 }

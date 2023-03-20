@@ -1,7 +1,46 @@
-.filter-container {
+.container {
   display: grid;
-  grid-template-columns: 3fr 10fr;
-  width: 70%;
+  grid-template-columns: 4fr 10fr;
+  width: 80%;
   margin: auto;
   justify-content: center;
+}
+
+.filter-container {
+  height: 500px;
+  margin: 50px 10px;
+  padding: 30px 10px;
+  border: 1px solid rgb(70, 195, 237);
+  border-radius: 20px;
+}
+
+.details-container {
+  height: 500px;
+  margin: 10px 10px;
+  padding: 30px 10px;
+}
+
+.data-container {
+  margin-top: 40px;
+  height: 100%;
+  overflow-y: auto;
+}
+.data-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.data-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.data-container::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.add-item-container {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 20px;
 }

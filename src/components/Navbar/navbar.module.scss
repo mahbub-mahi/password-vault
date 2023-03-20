@@ -1,0 +1,13 @@
+.container {
+  background-color: rgb(169, 212, 249);
+}
+.navbar-container {
+  width: 80%;
+  height: 100px;
+  margin: auto;
+  display: grid;
+
+  grid-template-columns: 1fr 9fr 2fr;
+  justify-content: center;
+  align-items: center;
+}
