@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button, FormControl, TextField } from "@mui/material";
 import styles from "./style.module.scss";
+import axios from "axios";
+import { createUser } from "../../api/create";
 
 function CreateUserPage() {
   const [userData, setUserData] = useState({
@@ -10,8 +12,12 @@ function CreateUserPage() {
     confirmPassword: "",
   });
 
-  const handleCreateUser = () => {
-    console.log(userData);
+  const handleCreateUser = async () => {
+    createUser(userData).then((res) => {
+      if (res) {
+        window.location.href = `/vault`;
+      }
+    });
   };
 
   const onEmailChange = (e) => {

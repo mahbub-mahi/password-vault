@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import styles from "./style.module.scss";
 import Accordian from "../common/Accordion";
 import AllValuts from "./AllVaults";
@@ -10,7 +11,7 @@ import DataTable from "../common/DataTable";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@mui/material";
 
-function HomeComponent() {
+function HomeComponent({ props }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

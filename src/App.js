@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import VaultHomePage from "./components/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CreateUser from "./pages/CreateUser.js";
-import HomePage from "./pages/HomePage.js";
+import HomeComponent from "./pages/HomePage.js";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/create" Component={CreateUser} />
-        <Route path="/" exact Component={LoginPage} />
-        <Route path="/vault" Component={HomePage} />
+        <Route path="/" Component={LoginPage} />
+        <Route path="/vault" Component={HomeComponent} />
       </Routes>
     </BrowserRouter>
   );
