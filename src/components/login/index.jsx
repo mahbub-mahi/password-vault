@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import {
   Button,
   FormControl,
@@ -12,18 +13,27 @@ import {
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import styles from "./style.module.scss";
-import { loginUser } from "../../api/create";
+import { loginUser } from "../../api/api";
 
 function Login(props) {
   const navigate = useNavigate();
+  const cookie = Cookies.get("userId");
 
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (cookie) {
+      navigate("/vault");
+    }
+  }, []);
 
   const onEmailChange = (e) => {
-    e.preventDefault();
+    //  e.preventDefault();
+
     setLoginData({
       ...loginData,
       email: e.target.value,
@@ -31,6 +41,7 @@ function Login(props) {
   };
 
   const onPasswordChange = (e) => {
+    setError(false);
     e.preventDefault();
     setLoginData({
       ...loginData,
@@ -44,12 +55,15 @@ function Login(props) {
 
   const handleLoginUser = () => {
     loginUser(loginData).then((res) => {
-      if (res) {
-        navigate(`/vault?${res.username}`, {
+      if (!res.error) {
+        Cookies.set("userId", res.user._id, { sameSite: "none", secure: true });
+        navigate(`/vault`, {
           search: { name: res.username },
           state: { name: res.username },
         });
         //   props.history.push(`/vault?${res.password}`);
+      } else {
+        setError(res.msg);
       }
     });
   };
@@ -91,6 +105,7 @@ function Login(props) {
                 label="Password"
               />
             </FormControl>
+            <p style={{ margin: "4px 1px", color: "red" }}>{error}</p>
           </div>
           <div>
             <Button

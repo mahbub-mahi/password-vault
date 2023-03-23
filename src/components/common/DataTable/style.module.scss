@@ -1,0 +1,24 @@
+.download-csv-container {
+  display: flex;
+  cursor: pointer;
+  justify-content: end;
+  align-items: center;
+  height: 50px;
+  &:hover {
+    color: #1976d2;
+  }
+}
+
+.name-col {
+  width: 150px;
+}
+.type-col {
+  width: 100px;
+}
+
+.password-col {
+  width: 230px;
+}
+.url-col {
+  width: 260px;
+}

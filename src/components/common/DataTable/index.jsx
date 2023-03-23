@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const Users = [
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import RestoreIcon from "@mui/icons-material/Restore";
+import EditIcon from "@mui/icons-material/Edit";
+import DownloadIcon from "@mui/icons-material/Download";
+import styles from "./style.module.scss";
+import axios from "axios";
+import { CSVLink } from "react-csv";
+import { deleteVaultTemp, restoreVault } from "../../../api/api";
+
+/* const Users = [
   {
     id: 1,
     selected: false,
@@ -105,17 +114,76 @@ const Users = [
     phone: "(254)954-1289",
     website: "demarco.info",
   },
-];
+]; */
 
 const DataTable = (props) => {
-  const [list, setList] = useState(Users);
+  const {
+    userId,
+    handleOpen,
+    data,
+    getUserData,
+    favouriteSelected,
+    loginSelected,
+    cardSelected,
+    allSelected,
+    binSelected,
+  } = props;
+
+  const [list, setList] = useState([]);
   const [masterChecked, setMasterChecked] = useState(false);
   const [selectedList, setSelectedList] = useState([]);
+  const [mainData, setMainData] = useState([]);
+  const [deletedData, setDeletedData] = useState([]);
+  const [csvData, setCsvData] = useState([]);
+  useEffect(() => {
+    if (userId !== "" || undefined) {
+      if (data) {
+        const items = [];
+        data.map((e, index) => {
+          items.push({
+            mainId: e._id,
+            id: index,
+            selected: false,
+            isDeleted: e.isDeleted,
+            name: e.name,
+            password: e.password,
+            type: e.type,
+            url: e.url,
+            notes: e.notes,
+          });
+          setList(items);
+        });
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (list) {
+      setMainData(list.filter((x) => x.isDeleted === false));
+      setDeletedData(list.filter((x) => x.isDeleted === true));
+    }
+  }, [list]);
+
+  useEffect(() => {
+    if (list) {
+      const items = [];
+      list.map((e, index) => {
+        items.push({
+          id: index,
+          name: e.name,
+          password: e.password,
+          type: e.type,
+          url: e.url,
+          notes: e.notes,
+        });
+      });
+      setCsvData(items.filter((x) => x.isDeleted === false));
+    }
+  }, [list]);
 
   const onMasterCheck = (e) => {
     list.map((user) => (user.selected = e.target.checked));
     setMasterChecked(e.target.checked);
-    setList(list);
     setSelectedList(list.filter((e) => e.selected));
   };
 
@@ -133,12 +201,42 @@ const DataTable = (props) => {
     const totalCheckedItems = list.filter((e) => e.selected).length;
 
     setMasterChecked(totalItems === totalCheckedItems);
-    setList(list);
     setSelectedList(list.filter((e) => e.selected));
   };
 
-  // Event to get selected rows(Optional)
-  const getSelectedRows = () => {};
+  const handleEditData = (e) => {
+    handleOpen(e);
+  };
+
+  const handleDeleteData = async (e) => {
+    if (userId !== "" || undefined) {
+      await axios
+        .delete(`http://localhost:8000/delete/${e.mainId}`)
+        .then((res) => {
+          if (res.status === 200) {
+            getUserData(userId);
+          }
+        });
+    }
+  };
+
+  const handleTempDelete = async (e) => {
+    if (userId !== "" || undefined) {
+      deleteVaultTemp(e.mainId).then((res) => {
+        if (res.success) {
+          getUserData(userId);
+        }
+      });
+    }
+  };
+
+  const handleRestoreData = (e) => {
+    restoreVault(e.mainId).then((res) => {
+      if (res.success) {
+        getUserData(userId);
+      }
+    });
+  };
 
   return (
     <div className="container">
@@ -147,52 +245,185 @@ const DataTable = (props) => {
           <table className="table">
             <thead>
               <tr>
-                <th scope="col">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={masterChecked}
-                    id="mastercheck"
-                    onChange={(e) => onMasterCheck(e)}
-                  />
-                </th>
                 <th scope="col">Name</th>
                 <th scope="col">Type</th>
                 <th scope="col">Password</th>
+                <th scope="col">url</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
-              {list.map((user) => (
-                <tr key={user.id} className={user.selected ? "selected" : ""}>
-                  <th scope="row">
-                    <input
-                      type="checkbox"
-                      checked={user.selected}
-                      className="form-check-input"
-                      id="rowcheck{user.id}"
-                      onChange={(e) => onItemCheck(e, user)}
-                    />
-                  </th>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                  <td>{user.website}</td>
-                </tr>
-              ))}
+              {binSelected ? (
+                <>
+                  {deletedData.map((user) => (
+                    <tr
+                      key={user.id}
+                      className={user.selected ? "selected" : ""}
+                    >
+                      <td>{user.name}</td>
+                      <td>{user.type}</td>
+                      <td>{user.password}</td>
+                      <td>{user.url}</td>
+                      <td className={`${styles["action-container"]}`}>
+                        <RestoreIcon
+                          onClick={() => handleRestoreData(user)}
+                          className={`${styles["edit-data"]}`}
+                        />
+                        <DeleteForeverIcon
+                          onClick={() => handleDeleteData(user)}
+                          className={`${styles["delete-data"]}`}
+                          style={{ marginLeft: "7px" }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : null}
+              {allSelected ? (
+                <>
+                  {mainData.map((user) => (
+                    <tr
+                      key={user.id}
+                      className={user.selected ? "selected" : ""}
+                    >
+                      <td>{user.name}</td>
+                      <td>{user.type}</td>
+                      <td>{user.password}</td>
+                      <td>{user.url}</td>
+                      <td className={`${styles["action-container"]}`}>
+                        {/* <EditIcon
+                          onClick={() => handleEditData(user)}
+                          className={`${styles["edit-data"]}`}
+                        /> */}
+                        <DeleteForeverIcon
+                          onClick={() => handleTempDelete(user)}
+                          className={`${styles["delete-data"]}`}
+                          style={{ marginLeft: "7px" }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : null}
+
+              {loginSelected ? (
+                <>
+                  {mainData.map((user) =>
+                    user.type === "login" ? (
+                      <tr
+                        key={user.id}
+                        className={user.selected ? "selected" : ""}
+                      >
+                        <td>{user.name}</td>
+                        <td>{user.type}</td>
+                        <td>{user.password}</td>
+                        <td>{user.url}</td>
+                        <td className={`${styles["action-container"]}`}>
+                          {/* <EditIcon
+                            onClick={() => handleEditData(user)}
+                            className={`${styles["edit-data"]}`}
+                          /> */}
+                          <DeleteForeverIcon
+                            onClick={() => handleTempDelete(user)}
+                            className={`${styles["delete-data"]}`}
+                            style={{ marginLeft: "7px" }}
+                          />
+                        </td>
+                      </tr>
+                    ) : null
+                  )}
+                </>
+              ) : null}
+
+              {cardSelected ? (
+                <>
+                  {mainData.map((user) =>
+                    user.type === "card" ? (
+                      <tr
+                        key={user.id}
+                        className={user.selected ? "selected" : ""}
+                      >
+                        <td className={`${styles["name-col"]}`}>{user.name}</td>
+                        <td className={`${styles["type-col"]}`}>{user.type}</td>
+                        <td className={`${styles["password-col"]}`}>
+                          {user.password}
+                        </td>
+                        <td className={`${styles["url-col"]}`}>{user.url}</td>
+                        <td className={`${styles["action-container"]}`}>
+                          {/* <EditIcon
+                            onClick={() => handleEditData(user)}
+                            className={`${styles["edit-data"]}`}
+                          /> */}
+                          <DeleteForeverIcon
+                            onClick={() => handleTempDelete(user)}
+                            className={`${styles["delete-data"]}`}
+                            style={{ marginLeft: "7px" }}
+                          />
+                        </td>
+                      </tr>
+                    ) : null
+                  )}
+                </>
+              ) : null}
+
+              {favouriteSelected ? (
+                <>
+                  {mainData.map((user) =>
+                    user.type === "favourite" ? (
+                      <tr
+                        key={user.id}
+                        className={user.selected ? "selected" : ""}
+                      >
+                        <th scope="row">
+                          <input
+                            type="checkbox"
+                            checked={user.selected}
+                            className="form-check-input"
+                            id="rowcheck{user.id}"
+                            onChange={(e) => onItemCheck(e, user)}
+                          />
+                        </th>
+                        <td>{user.name}</td>
+                        <td>{user.type}</td>
+                        <td>{user.password}</td>
+                        <td>{user.url}</td>
+                        <td className={`${styles["action-container"]}`}>
+                          {/*  <EditIcon
+                            onClick={() => handleEditData(user)}
+                            className={`${styles["edit-data"]}`}
+                          /> */}
+                          <DeleteForeverIcon
+                            onClick={() => handleTempDelete(user)}
+                            className={`${styles["delete-data"]}`}
+                            style={{ marginLeft: "7px" }}
+                          />
+                        </td>
+                      </tr>
+                    ) : null
+                  )}
+                </>
+              ) : null}
             </tbody>
           </table>
-          <button className="btn btn-primary" onClick={() => getSelectedRows()}>
-            Get Selected Items {selectedList.length}
-          </button>
-          {/* <div className="row">
-            <b>All Row Items:</b>
-            <code>{JSON.stringify(list)}</code>
+          <div className={`${styles["download-csv-container"]}`}>
+            <CSVLink
+              data={csvData}
+              filename={"password-file.csv"}
+              separator={";"}
+              className={`${styles["download-csv-container"]}`}
+            >
+              <p
+                style={{
+                  paddingRight: "10px",
+                  color: "#1976d2",
+                  margin: "0",
+                }}
+              >
+                Download All As CSV
+              </p>
+              <DownloadIcon />
+            </CSVLink>
           </div>
-          <div className="row">
-            <b>Selected Row Items(Click Button To Get):</b>
-            <code>{JSON.stringify(selectedList)}</code>
-          </div> */}
         </div>
       </div>
     </div>

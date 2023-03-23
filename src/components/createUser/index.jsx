@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, FormControl, TextField } from "@mui/material";
 import styles from "./style.module.scss";
-import axios from "axios";
-import { createUser } from "../../api/create";
+import { createUser } from "../../api/api";
 
 function CreateUserPage() {
   const [userData, setUserData] = useState({
@@ -12,12 +11,23 @@ function CreateUserPage() {
     confirmPassword: "",
   });
 
+  const [emailError, setEmailError] = useState("");
+
   const handleCreateUser = async () => {
-    createUser(userData).then((res) => {
-      if (res) {
-        window.location.href = `/vault`;
-      }
-    });
+    const emailRegex =
+      /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/i;
+
+    const isValid = emailRegex.test(userData.email);
+    if (isValid) {
+      setEmailError("");
+      createUser(userData).then((res) => {
+        if (res) {
+          window.location.href = `/vault`;
+        }
+      });
+    } else {
+      setEmailError("Invaid email");
+    }
   };
 
   const onEmailChange = (e) => {
@@ -59,6 +69,7 @@ function CreateUserPage() {
               type="text"
             />
           </FormControl>
+
           <FormControl className={`${styles["input-form"]}`} fullWidth>
             <TextField
               onChange={(e) => onNameChange(e)}
@@ -82,6 +93,9 @@ function CreateUserPage() {
             />
           </FormControl>
         </div>
+        <p style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}>
+          {emailError}
+        </p>
         <div>
           <Button
             onClick={() => handleCreateUser()}

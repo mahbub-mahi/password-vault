@@ -5,41 +5,36 @@ const Schema = mongoose.Schema;
 const vaultSchema = new Schema(
   {
     Id: {
-      type: Number,
+      type: String,
       required: true,
-      unique: true,
-      trim: true,
-      minlength: 3,
     },
     name: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      minlength: 3,
+      unique: false,
     },
-    valutname: {
+    vaultname: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      minlength: 3,
+      unique: false,
     },
     password: {
       type: String,
       required: true,
-      unique: true,
-      trim: true,
-      minlength: 3,
     },
     type: {
       type: String,
+      unique: false,
     },
     url: {
       type: String,
+      unique: false,
     },
     notes: {
       type: String,
+      unique: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      unique: false,
     },
   },
   {
