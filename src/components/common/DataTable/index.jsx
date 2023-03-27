@@ -240,105 +240,61 @@ const DataTable = (props) => {
 
   return (
     <div className="container">
-      <div className="row">
-        <div className="col-md-12">
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Type</th>
-                <th scope="col">Password</th>
-                <th scope="col">url</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {binSelected ? (
-                <>
-                  {deletedData.map((user) => (
-                    <tr
-                      key={user.id}
-                      className={user.selected ? "selected" : ""}
-                    >
-                      <td>{user.name}</td>
-                      <td>{user.type}</td>
-                      <td>{user.password}</td>
-                      <td>{user.url}</td>
-                      <td className={`${styles["action-container"]}`}>
-                        <RestoreIcon
-                          onClick={() => handleRestoreData(user)}
-                          className={`${styles["edit-data"]}`}
-                        />
-                        <DeleteForeverIcon
-                          onClick={() => handleDeleteData(user)}
-                          className={`${styles["delete-data"]}`}
-                          style={{ marginLeft: "7px" }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </>
-              ) : null}
-              {allSelected ? (
-                <>
-                  {mainData.map((user) => (
-                    <tr
-                      key={user.id}
-                      className={user.selected ? "selected" : ""}
-                    >
-                      <td>{user.name}</td>
-                      <td>{user.type}</td>
-                      <td>{user.password}</td>
-                      <td>{user.url}</td>
-                      <td className={`${styles["action-container"]}`}>
-                        {/* <EditIcon
-                          onClick={() => handleEditData(user)}
-                          className={`${styles["edit-data"]}`}
-                        /> */}
-                        <DeleteForeverIcon
-                          onClick={() => handleTempDelete(user)}
-                          className={`${styles["delete-data"]}`}
-                          style={{ marginLeft: "7px" }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </>
-              ) : null}
-
-              {loginSelected ? (
-                <>
-                  {mainData.map((user) =>
-                    user.type === "login" ? (
-                      <tr
-                        key={user.id}
-                        className={user.selected ? "selected" : ""}
-                      >
-                        <td>{user.name}</td>
-                        <td>{user.type}</td>
-                        <td>{user.password}</td>
-                        <td>{user.url}</td>
-                        <td className={`${styles["action-container"]}`}>
-                          {/* <EditIcon
-                            onClick={() => handleEditData(user)}
-                            className={`${styles["edit-data"]}`}
-                          /> */}
-                          <DeleteForeverIcon
-                            onClick={() => handleTempDelete(user)}
-                            className={`${styles["delete-data"]}`}
-                            style={{ marginLeft: "7px" }}
-                          />
-                        </td>
-                      </tr>
-                    ) : null
-                  )}
-                </>
-              ) : null}
-
-              {cardSelected ? (
-                <>
-                  {mainData.map((user) =>
-                    user.type === "card" ? (
+      {data.length === 0 ? (
+        <p className={`${styles["no-item-container"]}`}>No Items</p>
+      ) : (
+        <div className="row">
+          <div className={`${styles["table-container"]} col-md-12`}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Password</th>
+                  <th scope="col">url</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {binSelected ? (
+                  deletedData.length > 0 ? (
+                    <>
+                      {deletedData.map((user) => (
+                        <tr
+                          key={user.id}
+                          className={user.selected ? "selected" : ""}
+                        >
+                          <td className={`${styles["name-col"]}`}>
+                            {user.name}
+                          </td>
+                          <td className={`${styles["type-col"]}`}>
+                            {user.type}
+                          </td>
+                          <td className={`${styles["password-col"]}`}>
+                            {user.password}
+                          </td>
+                          <td className={`${styles["url-col"]}`}>{user.url}</td>
+                          <td className={`${styles["action-col"]}`}>
+                            <RestoreIcon
+                              onClick={() => handleRestoreData(user)}
+                              className={`${styles["edit-data"]}`}
+                            />
+                            <DeleteForeverIcon
+                              onClick={() => handleDeleteData(user)}
+                              className={`${styles["delete-data"]}`}
+                              style={{ marginLeft: "7px" }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  ) : (
+                    <p>No data </p>
+                  )
+                ) : null}
+                {allSelected ? (
+                  <>
+                    {mainData.map((user) => (
                       <tr
                         key={user.id}
                         className={user.selected ? "selected" : ""}
@@ -349,11 +305,11 @@ const DataTable = (props) => {
                           {user.password}
                         </td>
                         <td className={`${styles["url-col"]}`}>{user.url}</td>
-                        <td className={`${styles["action-container"]}`}>
+                        <td className={`${styles["action-col"]}`}>
                           {/* <EditIcon
-                            onClick={() => handleEditData(user)}
-                            className={`${styles["edit-data"]}`}
-                          /> */}
+                          onClick={() => handleEditData(user)}
+                          className={`${styles["edit-data"]}`}
+                        /> */}
                           <DeleteForeverIcon
                             onClick={() => handleTempDelete(user)}
                             className={`${styles["delete-data"]}`}
@@ -361,71 +317,151 @@ const DataTable = (props) => {
                           />
                         </td>
                       </tr>
-                    ) : null
-                  )}
-                </>
-              ) : null}
+                    ))}
+                  </>
+                ) : null}
 
-              {favouriteSelected ? (
-                <>
-                  {mainData.map((user) =>
-                    user.type === "favourite" ? (
-                      <tr
-                        key={user.id}
-                        className={user.selected ? "selected" : ""}
-                      >
-                        <th scope="row">
-                          <input
-                            type="checkbox"
-                            checked={user.selected}
-                            className="form-check-input"
-                            id="rowcheck{user.id}"
-                            onChange={(e) => onItemCheck(e, user)}
-                          />
-                        </th>
-                        <td>{user.name}</td>
-                        <td>{user.type}</td>
-                        <td>{user.password}</td>
-                        <td>{user.url}</td>
-                        <td className={`${styles["action-container"]}`}>
-                          {/*  <EditIcon
+                {loginSelected ? (
+                  <>
+                    {mainData.map((user) =>
+                      user.type === "login" ? (
+                        <tr
+                          key={user.id}
+                          className={user.selected ? "selected" : ""}
+                        >
+                          <td className={`${styles["name-col"]}`}>
+                            {user.name}
+                          </td>
+                          <td className={`${styles["type-col"]}`}>
+                            {user.type}
+                          </td>
+                          <td className={`${styles["password-col"]}`}>
+                            {user.password}
+                          </td>
+                          <td className={`${styles["url-col"]}`}>{user.url}</td>
+                          <td className={`${styles["action-col"]}`}>
+                            {/* <EditIcon
                             onClick={() => handleEditData(user)}
                             className={`${styles["edit-data"]}`}
                           /> */}
-                          <DeleteForeverIcon
-                            onClick={() => handleTempDelete(user)}
-                            className={`${styles["delete-data"]}`}
-                            style={{ marginLeft: "7px" }}
-                          />
-                        </td>
-                      </tr>
-                    ) : null
-                  )}
+                            <DeleteForeverIcon
+                              onClick={() => handleTempDelete(user)}
+                              className={`${styles["delete-data"]}`}
+                              style={{ marginLeft: "7px" }}
+                            />
+                          </td>
+                        </tr>
+                      ) : null
+                    )}
+                  </>
+                ) : null}
+
+                {cardSelected ? (
+                  <>
+                    {mainData.map((user) =>
+                      user.type === "card" ? (
+                        <tr
+                          key={user.id}
+                          className={user.selected ? "selected" : ""}
+                        >
+                          <td className={`${styles["name-col"]}`}>
+                            {user.name}
+                          </td>
+                          <td className={`${styles["type-col"]}`}>
+                            {user.type}
+                          </td>
+                          <td className={`${styles["password-col"]}`}>
+                            {user.password}
+                          </td>
+                          <td className={`${styles["url-col"]}`}>{user.url}</td>
+                          <td className={`${styles["action-col"]}`}>
+                            {/* <EditIcon
+                            onClick={() => handleEditData(user)}
+                            className={`${styles["edit-data"]}`}
+                          /> */}
+                            <DeleteForeverIcon
+                              onClick={() => handleTempDelete(user)}
+                              className={`${styles["delete-data"]}`}
+                              style={{ marginLeft: "7px" }}
+                            />
+                          </td>
+                        </tr>
+                      ) : null
+                    )}
+                  </>
+                ) : null}
+
+                {favouriteSelected ? (
+                  <>
+                    {mainData.map((user) =>
+                      user.type === "favourite" ? (
+                        <tr
+                          key={user.id}
+                          className={user.selected ? "selected" : ""}
+                        >
+                          <th scope="row">
+                            <input
+                              type="checkbox"
+                              checked={user.selected}
+                              className="form-check-input"
+                              id="rowcheck{user.id}"
+                              onChange={(e) => onItemCheck(e, user)}
+                            />
+                          </th>
+                          <td className={`${styles["name-col"]}`}>
+                            {user.name}
+                          </td>
+                          <td className={`${styles["type-col"]}`}>
+                            {user.type}
+                          </td>
+                          <td className={`${styles["password-col"]}`}>
+                            {user.password}
+                          </td>
+                          <td className={`${styles["url-col"]}`}>{user.url}</td>
+                          <td className={`${styles["action-col"]}`}>
+                            {/*  <EditIcon
+                            onClick={() => handleEditData(user)}
+                            className={`${styles["edit-data"]}`}
+                          /> */}
+                            <DeleteForeverIcon
+                              onClick={() => handleTempDelete(user)}
+                              className={`${styles["delete-data"]}`}
+                              style={{ marginLeft: "7px" }}
+                            />
+                          </td>
+                        </tr>
+                      ) : null
+                    )}
+                  </>
+                ) : null}
+              </tbody>
+            </table>
+            <div className={`${styles["download-csv-container"]}`}>
+              {data.length > 0 ? (
+                <>
+                  <CSVLink
+                    data={csvData}
+                    filename={"password-file.csv"}
+                    separator={";"}
+                    className={`${styles["download-csv-container"]}`}
+                  >
+                    <p
+                      style={{
+                        paddingRight: "10px",
+                        color: "#1976d2",
+                        margin: "0",
+                      }}
+                    >
+                      Download All As CSV
+                    </p>
+                    <DownloadIcon />
+                  </CSVLink>
                 </>
               ) : null}
-            </tbody>
-          </table>
-          <div className={`${styles["download-csv-container"]}`}>
-            <CSVLink
-              data={csvData}
-              filename={"password-file.csv"}
-              separator={";"}
-              className={`${styles["download-csv-container"]}`}
-            >
-              <p
-                style={{
-                  paddingRight: "10px",
-                  color: "#1976d2",
-                  margin: "0",
-                }}
-              >
-                Download All As CSV
-              </p>
-              <DownloadIcon />
-            </CSVLink>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

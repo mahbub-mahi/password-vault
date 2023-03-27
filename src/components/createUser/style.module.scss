@@ -2,6 +2,9 @@
   width: 30%;
   margin: auto;
   padding: 50px 30px;
+  @media (min-width: 300px) and (max-width: 700px) {
+    width: 70%;
+  }
   .header {
     text-align: center;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",

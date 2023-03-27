@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./style.module.scss";
 import { createVault, getItems } from "../../../api/api";
+import Swal from "sweetalert2";
 
 import CloseIcon from "@mui/icons-material/Close";
 import Backdrop from "@mui/material/Backdrop";
@@ -83,20 +84,29 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
   };
 
   const handleSaveItem = () => {
-    createVault(itemData, userId).then((res) => {
-      if (res.success) {
-        getUserData(userId);
-        handleClose();
-        setItemData({
-          type: "",
-          name: "",
-          vault: "",
-          password: "",
-          url: "",
-          notes: "",
-        });
-      }
-    });
+    if (
+      (itemData.name &&
+        itemData.type &&
+        itemData.password &&
+        itemData.vault) === ""
+    ) {
+      Swal.fire("Opss!", "Fill the necessary fields", "warning");
+    } else {
+      createVault(itemData, userId).then((res) => {
+        if (res.success) {
+          getUserData(userId);
+          handleClose();
+          setItemData({
+            type: "",
+            name: "",
+            vault: "",
+            password: "",
+            url: "",
+            notes: "",
+          });
+        }
+      });
+    }
   };
   return (
     <div>
@@ -112,16 +122,21 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
             timeout: 500,
           },
         }}
+        style={{ zIndex: "1000" }}
       >
         <Fade in={open}>
           <div className={`${styles["modal"]}`}>
             <div className={`${styles["modal--header"]}`}>
               <h4>New Item</h4>
-              <CloseIcon onClick={handleClose} style={{ cursor: "pointer" }} />
+              <CloseIcon
+                className={`${styles["modal-close-icon"]}`}
+                onClick={handleClose}
+                style={{ cursor: "pointer" }}
+              />
             </div>
             <Divider />
             <div>
-              <Row>
+              <Row className={`${styles["add-item-container"]}`}>
                 <Col>
                   <FormControl fullWidth>
                     <TextField
@@ -130,11 +145,12 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
                       type="text"
                       value={itemData.vault}
                       onChange={handleVaultChange}
+                      required
                     />
                   </FormControl>
                 </Col>
               </Row>
-              <Row>
+              <Row className={`${styles["add-item-container"]}`}>
                 <Col>
                   <FormControl fullWidth>
                     <InputLabel id="type-select-label">Type</InputLabel>
@@ -144,6 +160,7 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
                       value={itemData.type}
                       label="Age"
                       onChange={handleTypeChange}
+                      required
                     >
                       <MenuItem value={"login"}>Login</MenuItem>
                       <MenuItem value={"card"}>Card</MenuItem>
@@ -159,43 +176,58 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
                       type="text"
                       value={itemData.name}
                       onChange={handleNameChange}
+                      required
                     />
                   </FormControl>
                 </Col>
               </Row>
-              <FormControl fullWidth>
-                <TextField
-                  label="Password"
-                  id="outlined"
-                  onChange={handlePasswordChange}
-                />
-              </FormControl>
-              <FormControl fullWidth>
-                <TextField
-                  id="outlined"
-                  label="Url"
-                  type="text"
-                  value={itemData.url}
-                  onChange={handleUrlChange}
-                />
-              </FormControl>
-              <FormControl fullWidth>
-                <TextField
-                  label="Notes"
-                  type="text"
-                  id="outlined-multiline-static"
-                  multiline
-                  rows={4}
-                  value={itemData.notes}
-                  onChange={handleNotesChange}
-                />
-              </FormControl>
+              <Row className={`${styles["add-item-container"]}`}>
+                <Col>
+                  <FormControl fullWidth>
+                    <TextField
+                      label="Password"
+                      id="outlined"
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                  </FormControl>
+                </Col>
+              </Row>
+              <Row className={`${styles["add-item-container"]}`}>
+                <Col>
+                  <FormControl fullWidth>
+                    <TextField
+                      id="outlined"
+                      label="Url"
+                      type="text"
+                      value={itemData.url}
+                      onChange={handleUrlChange}
+                    />
+                  </FormControl>
+                </Col>
+              </Row>
+              <Row className={`${styles["add-item-container"]}`}>
+                <Col>
+                  <FormControl fullWidth>
+                    <TextField
+                      label="Notes"
+                      type="text"
+                      id="outlined-multiline-static"
+                      multiline
+                      rows={4}
+                      value={itemData.notes}
+                      onChange={handleNotesChange}
+                    />
+                  </FormControl>
+                </Col>
+              </Row>
             </div>
             <Button
               variant="contained"
               onClick={() => {
                 handleSaveItem();
               }}
+              className={`${styles["save-container"]}`}
             >
               Save
             </Button>

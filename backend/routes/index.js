@@ -11,15 +11,18 @@ router.post("/create", async (req, res) => {
   const salt = await bcrypt.genSalt();
   const passwordHash = await bcrypt.hash(password, salt);
 
-  const newUser = new User({
-    username,
-    email,
-    password: passwordHash,
-  });
-
-  const savedUser = await newUser.save();
-
-  res.status(201).json(savedUser);
+  const user = await User.findOne({ username: req.body.username });
+  if (user) {
+    res.status(200).json({ success: false, msg: "User Already exists" });
+  } else {
+    const newUser = new User({
+      username,
+      email,
+      password: passwordHash,
+    });
+    const savedUser = await newUser.save();
+    res.status(201).json({ success: true, savedUser });
+  }
 });
 
 //LOGIN
@@ -43,12 +46,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-/* // Logout
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("login");
-}); */
-
 //ADD ITEMS
 
 const getUserPosts = async (req, res) => {
@@ -68,7 +65,9 @@ router.post("/:id/createVault", async (req, res) => {
   try {
     if (req.body.password === "") {
       res.status(200).json({ success: false, msg: "password is empty" });
-    } else {
+    } /*  else if (req.body.email === "") {
+      res.status(200).json({ success: false, msg: "email is empty" });
+    } */ else {
       const data = await Vault.create(req.body);
       if (data) {
         res
@@ -82,17 +81,6 @@ router.post("/:id/createVault", async (req, res) => {
   }
 });
 
-/* router.post("/:id/deleteVaultTemp", async (req, res) => {
-  const id = req.params.id;
-  const update = {
-    isDeleted: true,
-  };
-
-  Vault.findByIdAndUpdate(id, update, { new: true }, () => {
-    console.log(res);
-  });
-});
- */
 //UPDATE Vault
 router.post("/:id/deleteVaultTemp", async (req, res) => {
   const id = req.params.id;

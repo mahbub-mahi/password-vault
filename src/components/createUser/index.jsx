@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, FormControl, TextField } from "@mui/material";
 import styles from "./style.module.scss";
 import { createUser } from "../../api/api";
+import Swal from "sweetalert2";
 
 function CreateUserPage() {
   const [userData, setUserData] = useState({
@@ -12,47 +13,91 @@ function CreateUserPage() {
   });
 
   const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPassError, setConfirmPassError] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const handleCreateUser = async () => {
     const emailRegex =
-      /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/i;
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    const isValid = emailRegex.test(userData.email);
-    if (isValid) {
-      setEmailError("");
-      createUser(userData).then((res) => {
-        if (res) {
-          window.location.href = `/vault`;
-        }
-      });
+    if (userData.email && !emailRegex.test(userData.email)) {
+      setEmailError("invalid email");
     } else {
-      setEmailError("Invaid email");
+      if ((userData.username && userData.email && userData.password) !== "") {
+        if (
+          (emailError && passwordError && confirmPassError && nameError) === ""
+        ) {
+          createUser(userData).then((res) => {
+            if (res.success) {
+              window.location.href = `/vault`;
+            } else {
+              setNameError(res.msg);
+            }
+          });
+        } else {
+          Swal.fire("Opss!", "Something went wrong!", "error");
+        }
+      } else {
+        Swal.fire("", "Fill up all the fields!", "warning");
+      }
     }
   };
 
   const onEmailChange = (e) => {
-    setUserData({
-      ...userData,
-      email: e.target.value,
-    });
+    const value = e.target.value;
+
+    if (value === "") {
+      setEmailError("Email is empty");
+    } else {
+      setEmailError("");
+      setUserData({
+        ...userData,
+        email: e.target.value,
+      });
+    }
   };
   const onNameChange = (e) => {
-    setUserData({
-      ...userData,
-      username: e.target.value,
-    });
+    const value = e.target.value;
+    if (value === "") {
+      setNameError("Name is empty");
+    } else {
+      setNameError("");
+      setUserData({
+        ...userData,
+        username: e.target.value,
+      });
+    }
   };
   const onPasswordChange = (e) => {
-    setUserData({
-      ...userData,
-      password: e.target.value,
-    });
+    const value = e.target.value;
+
+    if (value === "") {
+      setPasswordError("Password is empty");
+    } else if (value.length < 6) {
+      setPasswordError("Must contain 6 characters");
+    } else if (/[A-Z]/.test(value) === false) {
+      setPasswordError("Must contain Uppercase");
+    } else if (/[a-z]/.test(value) === false) {
+      setPasswordError("Must contain lowercase");
+    } else {
+      setPasswordError("");
+      setUserData({
+        ...userData,
+        password: e.target.value,
+      });
+    }
   };
   const onPasswordConfirmChange = (e) => {
-    setUserData({
-      ...userData,
-      confirmPassword: e.target.value,
-    });
+    if (userData.password !== e.target.value) {
+      setConfirmPassError(`Password Doesn't match with master passeword`);
+    } else {
+      setConfirmPassError("");
+      setUserData({
+        ...userData,
+        confirmPassword: e.target.value,
+      });
+    }
   };
 
   return (
@@ -68,6 +113,11 @@ function CreateUserPage() {
               label="E-mail Address"
               type="text"
             />
+            <p
+              style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}
+            >
+              {emailError}
+            </p>
           </FormControl>
 
           <FormControl className={`${styles["input-form"]}`} fullWidth>
@@ -77,13 +127,26 @@ function CreateUserPage() {
               label="Name"
               type="text"
             />
+            <p
+              style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}
+            >
+              {nameError}
+            </p>
           </FormControl>
           <FormControl className={`${styles["input-form"]}`} fullWidth>
             <TextField
               onChange={(e) => onPasswordChange(e)}
               label="Master-Password"
               id="outlined"
+              pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+              title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+              required
             />
+            <p
+              style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}
+            >
+              {passwordError}
+            </p>
           </FormControl>
           <FormControl className={`${styles["input-form"]}`} fullWidth>
             <TextField
@@ -91,11 +154,14 @@ function CreateUserPage() {
               label="Re type Master-Password"
               id="outlined"
             />
+            <p
+              style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}
+            >
+              {confirmPassError}
+            </p>
           </FormControl>
         </div>
-        <p style={{ marginBottom: "10px", marginLeft: "3px", color: "red" }}>
-          {emailError}
-        </p>
+
         <div>
           <Button
             onClick={() => handleCreateUser()}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Navigate, useNavigate } from "react-router-dom";
-import { getItems, deleteItem } from "../../api/api";
+import { useNavigate } from "react-router-dom";
+import { getItems } from "../../api/api";
 
 import styles from "./style.module.scss";
 import Accordian from "../common/Accordion";

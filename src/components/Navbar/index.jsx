@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "react-bootstrap";
 import PASSWORD_IMAGE from "../../assets/password.png";
 import styles from "./navbar.module.scss";
-import Divider from "@mui/material/Divider";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Button } from "react-bootstrap";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -32,15 +31,15 @@ const Navbar = () => {
           loading="lazy"
           src={PASSWORD_IMAGE}
           alt="password-valut"
-          width={70}
-          height={70}
+          className={`${styles["icon-vault"]}`}
         />
         <h3>PASSWORD VAULT</h3>
-        <div onClick={handleLogOut} style={{ cursor: "pointer" }}>
+        <div onClick={handleLogOut} className={`${styles["logout"]}`}>
           {isLogged ? (
-            <div>
-              <span>Logout </span> <LogoutIcon />
-            </div>
+            <Button className={`${styles["logout-container"]}`}>
+              <span style={{ paddingRight: "10px" }}>Logout </span>{" "}
+              <LogoutIcon />
+            </Button>
           ) : (
             ""
           )}

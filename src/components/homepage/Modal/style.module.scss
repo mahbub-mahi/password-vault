@@ -4,14 +4,31 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 40%;
-  height: 500px;
+  min-height: 500px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 24;
   padding: 30px;
   &--header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    .modal-close-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  }
+  @media (min-width: 300px) and (max-width: 700px) {
+    width: 75%;
+  }
+
+  .add-item-container {
+    margin-bottom: 13px;
+  }
+
+  .save-container {
+    margin-right: 20px;
+    width: 100px;
+    cursor: pointer;
   }
 }
