@@ -1,0 +1,35 @@
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  min-height: 200px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 24;
+  padding: 30px;
+  &--header {
+    text-align: center;
+    margin-bottom: 20px;
+    .modal-close-icon {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+    }
+  }
+  @media (min-width: 300px) and (max-width: 700px) {
+    width: 75%;
+  }
+
+  .confirm-container {
+    width: 40%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    @media (min-width: 300px) and (max-width: 700px) {
+      width: 75%;
+    }
+  }
+}

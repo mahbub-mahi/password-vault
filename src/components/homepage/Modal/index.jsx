@@ -18,7 +18,14 @@ import {
 } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 
-const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
+const AddItemModal = ({
+  open,
+  handleClose,
+  userId,
+  getUserData,
+  setAllSelected,
+  setBinSelected,
+}) => {
   const [itemData, setItemData] = useState({
     type: "",
     name: "",
@@ -95,6 +102,8 @@ const AddItemModal = ({ open, handleClose, userId, getUserData, editData }) => {
       createVault(itemData, userId).then((res) => {
         if (res.success) {
           getUserData(userId);
+          setAllSelected(true);
+          setBinSelected(false);
           handleClose();
           setItemData({
             type: "",

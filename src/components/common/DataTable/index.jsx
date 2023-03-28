@@ -8,113 +8,7 @@ import styles from "./style.module.scss";
 import axios from "axios";
 import { CSVLink } from "react-csv";
 import { deleteVaultTemp, restoreVault } from "../../../api/api";
-
-/* const Users = [
-  {
-    id: 1,
-    selected: false,
-    name: "Leanne Graham",
-    email: "Sincere@april.biz",
-    phone: "1-770-736-8031 x56442",
-    website: "hildegard.org",
-  },
-  {
-    id: 2,
-    selected: false,
-    name: "Ervin Howell",
-    email: "Shanna@melissa.tv",
-    phone: "010-692-6593 x09125",
-    website: "anastasia.net",
-  },
-  {
-    id: 3,
-    selected: false,
-    name: "Clementine Bauch",
-    email: "Nathan@yesenia.net",
-    phone: "1-463-123-4447",
-    website: "ramiro.info",
-  },
-  {
-    id: 4,
-    selected: true,
-    name: "Patricia Lebsack",
-    email: "Julianne.OConner@kory.org",
-    phone: "493-170-9623 x156",
-    website: "kale.biz",
-  },
-  {
-    id: 5,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 6,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 7,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 8,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 9,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 10,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 11,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 11,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-  {
-    id: 12,
-    selected: false,
-    name: "Chelsey Dietrich",
-    email: "Lucio_Hettinger@annie.ca",
-    phone: "(254)954-1289",
-    website: "demarco.info",
-  },
-]; */
+import ConfirmDelete from "../../homepage/Modal/ConfirmDelete/index.jsx";
 
 const DataTable = (props) => {
   const {
@@ -127,6 +21,7 @@ const DataTable = (props) => {
     cardSelected,
     allSelected,
     binSelected,
+    open,
   } = props;
 
   const [list, setList] = useState([]);
@@ -135,6 +30,9 @@ const DataTable = (props) => {
   const [mainData, setMainData] = useState([]);
   const [deletedData, setDeletedData] = useState([]);
   const [csvData, setCsvData] = useState([]);
+  const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
+  const [user, setUser] = useState({});
+
   useEffect(() => {
     if (userId !== "" || undefined) {
       if (data) {
@@ -220,6 +118,11 @@ const DataTable = (props) => {
     }
   };
 
+  const handleConfirmDelete = (user) => {
+    setOpenConfirmDeleteModal(true);
+    setUser(user);
+  };
+
   const handleTempDelete = async (e) => {
     if (userId !== "" || undefined) {
       deleteVaultTemp(e.mainId).then((res) => {
@@ -280,7 +183,7 @@ const DataTable = (props) => {
                               className={`${styles["edit-data"]}`}
                             />
                             <DeleteForeverIcon
-                              onClick={() => handleDeleteData(user)}
+                              onClick={() => handleConfirmDelete(user)}
                               className={`${styles["delete-data"]}`}
                               style={{ marginLeft: "7px" }}
                             />
@@ -289,7 +192,7 @@ const DataTable = (props) => {
                       ))}
                     </>
                   ) : (
-                    <p>No data </p>
+                    <p></p>
                   )
                 ) : null}
                 {allSelected ? (
@@ -462,6 +365,14 @@ const DataTable = (props) => {
           </div>
         </div>
       )}
+      {openConfirmDeleteModal ? (
+        <ConfirmDelete
+          openConfirmDeleteModal={openConfirmDeleteModal}
+          handleDeleteData={handleDeleteData}
+          setOpenConfirmDeleteModal={setOpenConfirmDeleteModal}
+          user={user}
+        />
+      ) : null}
     </div>
   );
 };

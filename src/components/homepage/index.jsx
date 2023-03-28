@@ -17,9 +17,8 @@ import { Button } from "@mui/material";
 function HomeComponent() {
   const token = Cookies.get("userId");
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [userId, setUserId] = React.useState("");
-  const [userData, setUserData] = React.useState();
+  const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState("");
   const [loginSelected, setLoginSelected] = useState(false);
   const [cardSelected, setCardSelected] = useState(false);
   const [favouriteSelected, setFavouriteSelected] = useState(false);
@@ -27,7 +26,7 @@ function HomeComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [binSelected, setBinSelected] = useState(false);
   const [itemData, setItemData] = useState([]);
-  // const [editData, setEditData] = useState();
+  const [binNumber, setBinNumber] = useState(0);
 
   const handleOpen = (e) => {
     setOpen(true);
@@ -46,6 +45,10 @@ function HomeComponent() {
       navigate(`/`);
     }
   }, [token]);
+
+  useEffect(() => {
+    setBinNumber(itemData.filter((x) => x.isDeleted === true));
+  }, [itemData]);
 
   useEffect(() => {
     if (userId) {
@@ -114,7 +117,9 @@ function HomeComponent() {
                   onClick={handleBinSelect}
                   className={`${styles["bin-container"]}`}
                 >
-                  <p>Bin</p>
+                  <p>
+                    Bin {binNumber.length > 0 ? `(${binNumber.length})` : null}
+                  </p>
                   <FolderDeleteIcon className={`${styles["bin-icon"]}`} />
                 </div>
               </div>
@@ -133,6 +138,7 @@ function HomeComponent() {
               </div>
               <div className={`${styles["data-container"]}`}>
                 <DataTable
+                  open={open}
                   loginSelected={loginSelected}
                   favouriteSelected={favouriteSelected}
                   cardSelected={cardSelected}
@@ -147,9 +153,10 @@ function HomeComponent() {
             </div>
           </div>
           <AddItemModal
-            userData={userData}
             open={open}
             userId={userId}
+            setAllSelected={setAllSelected}
+            setBinSelected={setBinSelected}
             //  editData={editData}
             handleClose={handleClose}
             getUserData={getUserData}
